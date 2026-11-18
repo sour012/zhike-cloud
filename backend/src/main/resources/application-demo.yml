@@ -1,0 +1,25 @@
+# 演示模式：不依赖 MySQL，内存库启动后自动建表灌数据
+# 用法：mvn spring-boot:run -Dspring-boot.run.profiles=demo
+# 适合「clone 下来先看看界面」，重启后数据回到初始状态；真实环境请用 MySQL + sql/ 脚本。
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    # MODE=MySQL 让 H2 认 MySQL 语法，同一份 schema.sql / data.sql 两边通用
+    url: jdbc:h2:mem:zhike;MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1
+    username: sa
+    password: ""
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:db/schema.sql
+      data-locations: classpath:db/data.sql
+      encoding: UTF-8
+
+mybatis-plus:
+  configuration:
+    # demo 下不打印每条 SQL，日志太吵
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+logging:
+  level:
+    com.zhike: info

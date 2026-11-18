@@ -1,0 +1,19 @@
+# Java / Maven
+backend/target/
+*.class
+*.log
+
+# 前端
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store
+
+# 本地配置（含数据库密码，绝不能提交）
+application-local.yml
+.env

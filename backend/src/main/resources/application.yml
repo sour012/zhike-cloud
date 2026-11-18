@@ -1,0 +1,62 @@
+server:
+  port: 8088
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: zhike-cloud
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/zhike_cloud?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true&rewriteBatchedStatements=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 5000
+  # 表结构与初始化数据不随应用启动执行：生产环境由 DBA 执行 sql/init-mysql.sql（含索引），
+  # 避免每次重启都去 INSERT 造成主键冲突。测试环境在 application-test.yml 里单独打开。
+  sql:
+    init:
+      mode: never
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+  web:
+    resources:
+      # 打包后前端静态资源放在 static 下，刷新页面不 404
+      add-mappings: true
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    # 开发期打印 SQL，生产改成 NoLoggingImpl
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    banner: false
+    db-config:
+      id-type: assign_id
+      table-underline: true
+
+zhike:
+  jwt:
+    # 生产环境务必通过环境变量覆盖；此处仅为本地演示默认值
+    secret: ${JWT_SECRET:emhpa2UtY2xvdWQtZGV2LXNlY3JldC1rZXktcGxlYXNlLWNoYW5nZS1pbi1wcm9kdWN0aW9uLTIwMjY=}
+    ttl-hours: 8
+    header: Authorization
+    prefix: "Bearer "
+  cors:
+    allowed-origins: http://localhost:5173,http://127.0.0.1:5173
+
+springdoc:
+  swagger-ui:
+    path: /doc.html
+  api-docs:
+    path: /v3/api-docs
+
+logging:
+  level:
+    root: info
+    com.zhike: debug
