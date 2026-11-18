@@ -106,6 +106,13 @@ int tryOccupy(@Param("id") Long id);
 
 ## 5. 快速开始
 
+### 5.0 克隆代码
+
+```bash
+git clone git@github.com:sour012/zhike-cloud.git
+cd zhike-cloud
+```
+
 ### 5.1 准备数据库（MySQL 8）
 
 ```bash
@@ -115,6 +122,17 @@ mysql -uroot -p zhike_cloud < backend/src/main/resources/db/schema.sql
 mysql -uroot -p zhike_cloud < backend/src/main/resources/db/data.sql
 mysql -uroot -p zhike_cloud < sql/indexes.sql
 ```
+
+导入后应有：13 张表、13 个教学班、23 条选课记录、7 条成绩、3 条公告。
+
+### 5.1b 不想装 MySQL？用演示模式（H2 内存库）
+
+```bash
+cd backend && mvn clean package -DskipTests
+java -jar target/zhike-cloud-0.1.0.jar --spring.profiles.active=demo
+```
+
+启动时自动建表灌数据，进程结束数据即丢弃，适合面试现场演示，不需要任何外部依赖。
 
 ### 5.2 启动后端
 
@@ -186,14 +204,26 @@ zhike-cloud/
 cd backend && mvn test
 ```
 
-覆盖的场景：
+覆盖的场景（共 22 个用例，全部通过）：
 
 | 测试类 | 覆盖内容 |
 | --- | --- |
-| `AuthAndPermissionTest` | 登录成功/失败、伪造令牌、学生与教师访问管理接口被拒、菜单按角色下发 |
-| `EnrollmentTest` | 时间冲突、重复选课、最后一个名额不超卖、退课释放名额、已录成绩不可退、只能退自己的课 |
+| `AuthAndPermissionTest` | 登录成功/失败、伪造令牌、学生与教师访问管理接口被拒、菜单按角色下发、请求体格式错 400、动词错 405、教师改角色 403 |
+| `EnrollmentTest` | 时间冲突、重复选课、最后一个名额不超卖、退课释放名额、已录成绩不可退、只能退自己的课、我的课表默认当前学期 |
 | `ScoreTest` | 总评与绩点计算、教师跨班录入被拒、学生只看自己、加权绩点、分数越界校验 |
 | `AdminCrudTest` | 课程编号重复 409、有开课记录不可删、公告权限、操作日志落库 |
+
+### 8.1 真实 MySQL 也跑过一遍
+
+H2 只能保证语法层兼容，索引行为、锁粒度这些东西必须真库验。已在 MySQL 8.0.46（utf8mb4 / InnoDB）上完成：
+
+- 三份脚本执行成功，13 张表 + 17 个二级索引就位，中文无乱码；
+- 三角色登录权限点数：admin 23 / teacher 10 / student 8；
+- **并发抢课**：新建容量 = 1 的教学班，3 个学生用线程栅栏同时提交，
+  结果恰好 1 个 200、2 个 409「该课程名额已满」，库内 `enrolled = 1/1`，没有超卖；
+- 时间冲突 409、重复选课 409、退课释放名额、教师跨班查名单 403、学生查用户列表 403、无令牌 401；
+- 教师录入 85/92 → 总评 89.9、绩点 3.7；学生加权绩点 3.53；
+- `sys_oper_log` 按操作落库（AOP 生效）。
 
 ## 9. 已知局限
 

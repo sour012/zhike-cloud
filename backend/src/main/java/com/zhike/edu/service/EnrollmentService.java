@@ -77,11 +77,9 @@ public class EnrollmentService {
 
         // 原子占座：返回 0 说明已经满了，此时直接失败，不会出现「先查到有名额、写的时候没了」
         if (offeringMapper.tryOccupy(offeringId) == 0) {
-            // 并发场景下 off 是开抢之前读的，数字已经过时，重读一次再报给用户
-            CourseOffering latest = offeringMapper.selectById(offeringId);
-            int enrolled = latest != null && latest.getEnrolled() != null ? latest.getEnrolled() : 0;
-            int capacity = latest != null && latest.getCapacity() != null ? latest.getCapacity() : 0;
-            throw new BizException(409, "该课程名额已满（" + enrolled + "/" + capacity + "）");
+            // 这里刻意不回「已选 x/y」：并发时赢家的事务还没提交，重读拿到的仍是旧快照，
+            // 报出来的数字必然是过时的，反而误导用户。只说「满了」永远成立。
+            throw new BizException(409, "该课程名额已满，请选择其他课程");
         }
 
         if (exist != null) {
