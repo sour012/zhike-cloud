@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,5 +69,31 @@ class AuthAndPermissionTest extends ApiTestSupport {
         String forged = studentToken.substring(0, studentToken.length() - 3) + "abc";
         mvc.perform(get("/auth/profile").header("Authorization", bearer(forged)))
                 .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    @DisplayName("请求体格式错误与动词用错分别返回 400 / 405，不能都算 500")
+    void malformedRequestIsNotServerError() throws Exception {
+        // 授权接口要求裸数组 [1,2]，传成对象应被识别为调用方错误
+        mvc.perform(put("/roles/1/menus").contentType("application/json")
+                        .header("Authorization", bearer(adminToken))
+                        .content("{\"menuIds\":[1]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.msg").value("请求体格式不正确"));
+
+        // 该接口只支持 PUT
+        mvc.perform(post("/roles/1/menus").contentType("application/json")
+                        .header("Authorization", bearer(adminToken))
+                        .content("[1]"))
+                .andExpect(status().isMethodNotAllowed());
+    }
+
+    @Test
+    @DisplayName("教师没有角色管理权限，即使请求体合法也返回 403 而不是 500")
+    void teacherCannotAssignRoleMenus() throws Exception {
+        mvc.perform(put("/roles/2/menus").contentType("application/json")
+                        .header("Authorization", bearer(teacherToken))
+                        .content("[1]"))
+                .andExpect(status().isForbidden());
     }
 }

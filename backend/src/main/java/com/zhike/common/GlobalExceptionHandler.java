@@ -5,9 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -53,6 +55,20 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public Result<Void> handleAuth(AuthenticationException e) {
         return Result.fail(401, "登录状态已失效，请重新登录");
+    }
+
+    /** 请求体反序列化失败：比如该传数组却传了对象，属于调用方问题，不能算 500 */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<Void> handleUnreadable(HttpMessageNotReadableException e) {
+        return Result.fail(400, "请求体格式不正确");
+    }
+
+    /** 动词用错（如该用 PUT 却发 POST），明确回 405，前端好定位 */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
+    public Result<Void> handleMethod(HttpRequestMethodNotSupportedException e) {
+        return Result.fail(405, "不支持的请求方法：" + e.getMethod());
     }
 
     @ExceptionHandler(Exception.class)
