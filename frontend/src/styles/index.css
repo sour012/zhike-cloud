@@ -3,6 +3,15 @@
   --zk-bg: #f4f6fa;
   --zk-text: #1f2533;
   --zk-muted: #8a93a6;
+
+  /* 让 Element Plus 的主色与系统主色一致，避免按钮/链接仍是默认的 #409eff */
+  --el-color-primary: #2f54eb;
+  --el-color-primary-light-3: #6d87f1;
+  --el-color-primary-light-5: #97aaf5;
+  --el-color-primary-light-7: #c0cbf9;
+  --el-color-primary-light-8: #d5dcfb;
+  --el-color-primary-light-9: #eaeefd;
+  --el-color-primary-dark-2: #2643bc;
 }
 
 * {

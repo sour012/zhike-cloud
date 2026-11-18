@@ -1,5 +1,5 @@
 -- 智课云 · 初始化数据（演示用，密码见 README）
--- 账号：admin/admin123（管理员）、teacher1/teacher123（教师）、student1/student123（学生 张平）
+-- 账号：admin/admin123（管理员）、teacher1/teacher123（教师）、student1/student123（学生 李思远）
 
 -- ---------------- 角色 ----------------
 INSERT INTO sys_role (id, code, name, remark, created_at) VALUES
@@ -55,7 +55,7 @@ INSERT INTO sys_user (id, username, password, real_name, user_type, dept, phone,
  (1, 'admin',    '$2a$10$RsQeg6DA5vknWXpt6b4O4.3X89NVVm3ow5V2Fx/Q75eXOMhwvTX8C', '系统管理员', 1, '教务处',       '13800000001', 'admin@zhike.edu.cn',    1, '2026-08-20 09:00:00', '2026-08-20 09:00:00'),
  (2, 'teacher1', '$2a$10$pAL5ecM2rrNFA/HA4T9sDuXkjnQ7dVh12in57cUzFrYGdkxfozaqi', '王爱国',    2, '计算机学院',   '13800000002', 'wangag@zhike.edu.cn',   1, '2026-08-20 09:00:00', '2026-08-20 09:00:00'),
  (5, 'teacher2', '$2a$10$pAL5ecM2rrNFA/HA4T9sDuXkjnQ7dVh12in57cUzFrYGdkxfozaqi', '李静',      2, '计算机学院',   '13800000005', 'lijing@zhike.edu.cn',   1, '2026-08-20 09:00:00', '2026-08-20 09:00:00'),
- (3, 'student1', '$2a$10$PIsXOLWkkU5j1UgMK1UELuQXN.TXMsM3io21YfYsJTrdEg2l/88zW', '张平',      3, '计算机科学与技术 2022 级', '13800000003', 'zhangping@stu.zhike.edu.cn', 1, '2026-08-20 09:00:00', '2026-08-20 09:00:00'),
+ (3, 'student1', '$2a$10$PIsXOLWkkU5j1UgMK1UELuQXN.TXMsM3io21YfYsJTrdEg2l/88zW', '李思远',    3, '计算机科学与技术 2022 级', '13800000003', 'lisiyuan@stu.zhike.edu.cn', 1, '2026-08-20 09:00:00', '2026-08-20 09:00:00'),
  (4, 'student2', '$2a$10$PIsXOLWkkU5j1UgMK1UELuQXN.TXMsM3io21YfYsJTrdEg2l/88zW', '林小雨',    3, '计算机科学与技术 2022 级', '13800000004', 'linxy@stu.zhike.edu.cn', 1, '2026-08-20 09:00:00', '2026-08-20 09:00:00'),
  (6, 'student3', '$2a$10$PIsXOLWkkU5j1UgMK1UELuQXN.TXMsM3io21YfYsJTrdEg2l/88zW', '陈昊',      3, '计算机科学与技术 2022 级', '13800000006', 'chenhao@stu.zhike.edu.cn', 1, '2026-08-20 09:00:00', '2026-08-20 09:00:00');
 

@@ -40,7 +40,7 @@ class ScoreTest extends ApiTestSupport {
     @Test
     @DisplayName("教师不能给别人的教学班录成绩")
     void teacherCannotGradeOthersOffering() throws Exception {
-        // 3003 = 张平 选 计算机网络（李静开的 2003）
+        // 3003 = 李思远 选 计算机网络（李静开的 2003）
         mvc.perform(post("/scores").contentType(MediaType.APPLICATION_JSON)
                         .header("Authorization", bearer(teacherToken))
                         .content("{\"enrollmentId\":3003,\"usualScore\":80,\"examScore\":90}"))
